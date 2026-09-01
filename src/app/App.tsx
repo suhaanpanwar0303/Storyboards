@@ -49,7 +49,7 @@ import articleRelated2 from "@/imports/Article/379c0155bc413a61ca41917df832a2e64
 import articleRelated3 from "@/imports/Article/44b0aa43a57e23aec207706d7933d9eaa0f3360a.png";
 
 // ─── Types ─────────────────────────────────────────────────────────────────
-type Page = "home" | "shop" | "product" | "about" | "article" | "cart" | "checkout" | "catalogue";
+type Page = "home" | "shop" | "product" | "about" | "article" | "cart" | "customer-details" | "checkout" | "catalogue";
 
 export interface CartItem {
   id: string;
@@ -59,6 +59,19 @@ export interface CartItem {
   color?: string;
   img: string;
   quantity: number;
+}
+
+export interface CustomerDetails {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  address: string;
+  city: string;
+  state: string;
+  pincode: string;
+  landmark?: string;
+  saveDetails: boolean;
 }
 
 export interface Product {
@@ -289,7 +302,18 @@ function Navbar({
     <header className={`fixed top-0 left-0 right-0 z-50 ${nav} transition-all duration-300`}>
       <div className="max-w-[1440px] mx-auto px-6 md:px-10 h-20 flex items-center justify-between">
         {/* Logo & Back button */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3 md:gap-4">
+          {canGoBack && (
+            <button
+              onClick={goBack}
+              className={`flex items-center gap-1.5 font-['Inter',sans-serif] font-medium text-xs tracking-wider uppercase border border-current/30 px-3.5 py-1.5 rounded-full ${tc} hover:bg-black/10 transition-all shadow-sm`}
+              title="Go back to previous page"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>Back</span>
+            </button>
+          )}
+
           <button
             onClick={() => { setPage("home"); window.scrollTo(0, 0); }}
             className="flex items-center gap-3 group"
@@ -299,17 +323,6 @@ function Navbar({
               STORYBOARD
             </span>
           </button>
-
-          {canGoBack && (
-            <button
-              onClick={goBack}
-              className={`flex items-center gap-1.5 font-['Inter',sans-serif] font-medium text-xs tracking-wider uppercase border border-current/30 px-3 py-1.5 rounded-full ${tc} hover:bg-black/5 transition-all`}
-              title="Go back to previous page"
-            >
-              <ArrowLeft className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Back</span>
-            </button>
-          )}
         </div>
 
         {/* Desktop nav */}
@@ -1452,7 +1465,7 @@ function CartPage({
               </div>
 
               <button
-                onClick={() => { setPage("checkout"); window.scrollTo(0, 0); }}
+                onClick={() => { setPage("customer-details"); window.scrollTo(0, 0); }}
                 className="w-full bg-[#141211] hover:bg-[#9a2227] text-[#ede4da] font-['Inter',sans-serif] font-medium text-lg py-4 rounded-xl transition-all shadow-md flex items-center justify-center gap-3 group"
               >
                 <span>Proceed to Checkout</span>
@@ -1466,40 +1479,353 @@ function CartPage({
   );
 }
 
-// ─── Checkout Page ──────────────────────────────────────────────────────────
-function CheckoutPage({
+// ─── Customer Details Page ──────────────────────────────────────────────────
+function CustomerDetailsPage({
+  customerDetails,
+  onSaveCustomerDetails,
   cartItems,
-  onClearCart,
   setPage,
+  goBack,
 }: {
+  customerDetails: CustomerDetails;
+  onSaveCustomerDetails: (details: CustomerDetails) => void;
   cartItems: CartItem[];
-  onClearCart: () => void;
   setPage: (p: Page) => void;
+  goBack: () => void;
 }) {
-  const [isOrdered, setIsOrdered] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState<"card" | "upi" | "cod">("upi");
-  const [formData, setFormData] = useState({
-    firstName: "Priya",
-    lastName: "Sharma",
-    email: "priya.sharma@example.com",
-    phone: "+91 98765 43210",
-    address: "42 Heritage Enclave, Civil Lines",
-    city: "Jaipur",
-    state: "Rajasthan",
-    pincode: "302006",
-    upiId: "priya@upi",
-    cardNumber: "4532 •••• •••• 8924",
-    cardExp: "08/28",
-    cardCvv: "•••",
-  });
+  const [form, setForm] = useState<CustomerDetails>(customerDetails);
+  const [saveSuccess, setSaveSuccess] = useState("");
 
   const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const shippingCost = subtotal >= 3000 ? 0 : 250;
   const total = subtotal + shippingCost;
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value, type } = e.target;
+    if (type === "checkbox") {
+      const checked = (e.target as HTMLInputElement).checked;
+      setForm({ ...form, [name]: checked });
+    } else {
+      setForm({ ...form, [name]: value });
+    }
   };
+
+  const handleSaveAndContinue = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSaveCustomerDetails(form);
+    setSaveSuccess("Customer details saved!");
+    setTimeout(() => {
+      setPage("checkout");
+      window.scrollTo(0, 0);
+    }, 300);
+  };
+
+  const savedProfiles = [
+    {
+      name: "Priya Sharma (Home)",
+      details: {
+        firstName: "Priya",
+        lastName: "Sharma",
+        email: "priya.sharma@example.com",
+        phone: "+91 98765 43210",
+        address: "42 Heritage Enclave, Civil Lines",
+        city: "Jaipur",
+        state: "Rajasthan",
+        pincode: "302006",
+        landmark: "Near Civil Lines Metro",
+        saveDetails: true,
+      },
+    },
+    {
+      name: "Rahul Verma (Work)",
+      details: {
+        firstName: "Rahul",
+        lastName: "Verma",
+        email: "rahul.v@studio.in",
+        phone: "+91 99887 66554",
+        address: "802 Artisan Hub, Malviya Nagar",
+        city: "Jaipur",
+        state: "Rajasthan",
+        pincode: "302017",
+        landmark: "Opposite World Trade Park",
+        saveDetails: true,
+      },
+    },
+  ];
+
+  return (
+    <div className="bg-[#ede4da] min-h-screen pt-28 pb-20">
+      <div className="max-w-[1440px] mx-auto px-6 md:px-10">
+        {/* Step Indicator */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 pb-6 border-b border-black/10">
+          <div>
+            <div className="flex items-center gap-2 text-xs font-['Inter',sans-serif] font-semibold text-[#9a2227] uppercase tracking-wider mb-1">
+              <span>Checkout Flow</span>
+              <span>•</span>
+              <span className="text-[#141211]">Step 1 of 2</span>
+            </div>
+            <h1 className="font-['Inter',sans-serif] font-bold text-4xl md:text-5xl text-[#141211] tracking-tight">
+              Customer Details & Shipping
+            </h1>
+            <p className="font-['Inter',sans-serif] text-[#828282] text-base mt-2">
+              Enter your contact information and shipping address for express delivery.
+            </p>
+          </div>
+          <button
+            onClick={goBack}
+            className="flex items-center gap-2 font-['Inter',sans-serif] font-medium text-sm text-[#141211] hover:text-[#9a2227] transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" /> Back to Bag
+          </button>
+        </div>
+
+        {/* Progress bar */}
+        <div className="w-full bg-black/10 rounded-full h-2 mb-10 overflow-hidden">
+          <div className="bg-[#9a2227] h-full w-1/2 rounded-full transition-all duration-500" />
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 items-start">
+          {/* Main Details Form (2 cols) */}
+          <form onSubmit={handleSaveAndContinue} className="lg:col-span-2 flex flex-col gap-8">
+            {/* Quick Profile Selection */}
+            <div className="bg-white/70 backdrop-blur-md rounded-2xl p-6 md:p-8 border border-white/60 shadow-sm flex flex-col gap-4">
+              <div className="flex items-center justify-between">
+                <h2 className="font-['Inter',sans-serif] font-semibold text-lg text-[#141211] flex items-center gap-2">
+                  <Sparkles className="w-5 h-5 text-[#9a2227]" /> Saved Customer Profiles
+                </h2>
+                <span className="text-xs font-['Inter',sans-serif] text-[#828282]">Click to autofill</span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {savedProfiles.map((prof, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    onClick={() => setForm(prof.details)}
+                    className="p-4 rounded-xl border border-black/10 bg-white hover:border-[#9a2227] text-left transition-all hover:shadow-sm"
+                  >
+                    <p className="font-['Inter',sans-serif] font-semibold text-sm text-[#141211]">{prof.name}</p>
+                    <p className="font-['Inter',sans-serif] text-xs text-[#828282] truncate">{prof.details.address}, {prof.details.city}</p>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Personal Details */}
+            <div className="bg-white/70 backdrop-blur-md rounded-2xl p-6 md:p-8 border border-white/60 shadow-sm flex flex-col gap-6">
+              <h2 className="font-['Inter',sans-serif] font-semibold text-xl text-[#141211] flex items-center gap-3">
+                <span className="w-7 h-7 rounded-full bg-[#141211] text-white text-xs font-bold flex items-center justify-center">1</span>
+                Contact Information
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-['Inter',sans-serif] font-medium text-[#828282] uppercase mb-1">First Name *</label>
+                  <input
+                    type="text"
+                    name="firstName"
+                    required
+                    value={form.firstName}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 rounded-xl border border-black/20 bg-white text-sm font-['Inter',sans-serif] text-[#141211] focus:outline-none focus:border-[#9a2227]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-['Inter',sans-serif] font-medium text-[#828282] uppercase mb-1">Last Name *</label>
+                  <input
+                    type="text"
+                    name="lastName"
+                    required
+                    value={form.lastName}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 rounded-xl border border-black/20 bg-white text-sm font-['Inter',sans-serif] text-[#141211] focus:outline-none focus:border-[#9a2227]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-['Inter',sans-serif] font-medium text-[#828282] uppercase mb-1">Email Address (for Invoice) *</label>
+                  <input
+                    type="email"
+                    name="email"
+                    required
+                    value={form.email}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 rounded-xl border border-black/20 bg-white text-sm font-['Inter',sans-serif] text-[#141211] focus:outline-none focus:border-[#9a2227]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-['Inter',sans-serif] font-medium text-[#828282] uppercase mb-1">Phone Number (for Courier SMS) *</label>
+                  <input
+                    type="tel"
+                    name="phone"
+                    required
+                    value={form.phone}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 rounded-xl border border-black/20 bg-white text-sm font-['Inter',sans-serif] text-[#141211] focus:outline-none focus:border-[#9a2227]"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Delivery Address */}
+            <div className="bg-white/70 backdrop-blur-md rounded-2xl p-6 md:p-8 border border-white/60 shadow-sm flex flex-col gap-6">
+              <h2 className="font-['Inter',sans-serif] font-semibold text-xl text-[#141211] flex items-center gap-3">
+                <span className="w-7 h-7 rounded-full bg-[#141211] text-white text-xs font-bold flex items-center justify-center">2</span>
+                Shipping Address
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="md:col-span-2">
+                  <label className="block text-xs font-['Inter',sans-serif] font-medium text-[#828282] uppercase mb-1">Street Address / House No. *</label>
+                  <input
+                    type="text"
+                    name="address"
+                    required
+                    value={form.address}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 rounded-xl border border-black/20 bg-white text-sm font-['Inter',sans-serif] text-[#141211] focus:outline-none focus:border-[#9a2227]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-['Inter',sans-serif] font-medium text-[#828282] uppercase mb-1">City *</label>
+                  <input
+                    type="text"
+                    name="city"
+                    required
+                    value={form.city}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 rounded-xl border border-black/20 bg-white text-sm font-['Inter',sans-serif] text-[#141211] focus:outline-none focus:border-[#9a2227]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-['Inter',sans-serif] font-medium text-[#828282] uppercase mb-1">State *</label>
+                  <input
+                    type="text"
+                    name="state"
+                    required
+                    value={form.state}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 rounded-xl border border-black/20 bg-white text-sm font-['Inter',sans-serif] text-[#141211] focus:outline-none focus:border-[#9a2227]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-['Inter',sans-serif] font-medium text-[#828282] uppercase mb-1">PIN Code *</label>
+                  <input
+                    type="text"
+                    name="pincode"
+                    required
+                    value={form.pincode}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 rounded-xl border border-black/20 bg-white text-sm font-['Inter',sans-serif] text-[#141211] focus:outline-none focus:border-[#9a2227]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-['Inter',sans-serif] font-medium text-[#828282] uppercase mb-1">Landmark (Optional)</label>
+                  <input
+                    type="text"
+                    name="landmark"
+                    value={form.landmark || ""}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 rounded-xl border border-black/20 bg-white text-sm font-['Inter',sans-serif] text-[#141211] focus:outline-none focus:border-[#9a2227]"
+                  />
+                </div>
+              </div>
+
+              {/* Save Details Toggle */}
+              <div className="pt-4 border-t border-black/10 flex items-center justify-between">
+                <label className="flex items-center gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    name="saveDetails"
+                    checked={form.saveDetails}
+                    onChange={handleChange}
+                    className="w-5 h-5 accent-[#9a2227] rounded cursor-pointer"
+                  />
+                  <span className="font-['Inter',sans-serif] font-medium text-sm text-[#141211]">
+                    Save these customer details for 1-click checkout on future orders
+                  </span>
+                </label>
+              </div>
+            </div>
+
+            {saveSuccess && <p className="text-sm font-semibold text-green-700 font-['Inter',sans-serif]">{saveSuccess}</p>}
+
+            <button
+              type="submit"
+              className="bg-[#141211] hover:bg-[#9a2227] text-[#ede4da] font-['Inter',sans-serif] font-medium text-xl py-5 rounded-2xl shadow-lg transition-all flex items-center justify-center gap-3 group"
+            >
+              <span>Save & Proceed to Payment</span>
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            </button>
+          </form>
+
+          {/* Right Column: Order Summary */}
+          <div className="bg-white/70 backdrop-blur-md rounded-2xl p-6 md:p-8 border border-white/60 shadow-md sticky top-28 flex flex-col gap-6">
+            <h2 className="font-['Inter',sans-serif] font-bold text-2xl text-[#141211] pb-4 border-b border-black/10">
+              In Your Bag ({cartItems.reduce((a, b) => a + b.quantity, 0)})
+            </h2>
+
+            <div className="flex flex-col gap-4 max-h-72 overflow-y-auto pr-1">
+              {cartItems.map((item) => (
+                <div key={item.id} className="flex items-center gap-4">
+                  <div className="w-14 h-14 rounded-lg bg-[#ede4da] overflow-hidden flex-shrink-0">
+                    <img src={item.img} alt={item.name} className="w-full h-full object-cover" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-['Inter',sans-serif] font-medium text-sm text-[#141211] truncate">{item.name}</h4>
+                    <p className="font-['Inter',sans-serif] text-xs text-[#828282]">Qty: {item.quantity}</p>
+                  </div>
+                  <span className="font-['Inter',sans-serif] font-semibold text-sm text-[#141211]">
+                    Rs. {(item.price * item.quantity).toLocaleString("en-IN")}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex flex-col gap-3 text-sm font-['Inter',sans-serif] py-4 border-y border-black/10">
+              <div className="flex justify-between text-[#141211]">
+                <span>Subtotal</span>
+                <span className="font-medium">Rs. {subtotal.toLocaleString("en-IN")}</span>
+              </div>
+              <div className="flex justify-between text-[#141211]">
+                <span>Insured Shipping</span>
+                <span className="font-medium">{shippingCost === 0 ? <span className="text-green-700">FREE</span> : `Rs. ${shippingCost}`}</span>
+              </div>
+            </div>
+
+            <div className="flex justify-between items-baseline font-['Inter',sans-serif]">
+              <span className="font-bold text-xl text-[#141211]">Total Payable</span>
+              <span className="font-bold text-2xl text-[#9a2227]">
+                Rs. {total.toLocaleString("en-IN")}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Checkout Page ──────────────────────────────────────────────────────────
+function CheckoutPage({
+  cartItems,
+  customerDetails,
+  onClearCart,
+  setPage,
+  goBack,
+}: {
+  cartItems: CartItem[];
+  customerDetails: CustomerDetails;
+  onClearCart: () => void;
+  setPage: (p: Page) => void;
+  goBack: () => void;
+}) {
+  const [isOrdered, setIsOrdered] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<"card" | "upi" | "cod">("upi");
+  const [upiId, setUpiId] = useState("priya@upi");
+  const [cardNumber, setCardNumber] = useState("4532 •••• •••• 8924");
+  const [cardExp, setCardExp] = useState("08/28");
+  const [cardCvv, setCardCvv] = useState("•••");
+
+  const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const shippingCost = subtotal >= 3000 ? 0 : 250;
+  const total = subtotal + shippingCost;
 
   const handlePlaceOrder = (e: React.FormEvent) => {
     e.preventDefault();
@@ -1520,7 +1846,7 @@ function CheckoutPage({
             Thank you for your order!
           </h1>
           <p className="font-['Inter',sans-serif] text-[#828282] text-base mb-6">
-            Order <span className="font-semibold text-[#141211]">#SB-2026-8942</span> has been placed successfully. A confirmation email has been sent to <span className="font-medium text-[#141211]">{formData.email}</span>.
+            Order <span className="font-semibold text-[#141211]">#SB-2026-8942</span> has been placed successfully. Confirmation sent to <span className="font-medium text-[#141211]">{customerDetails.email}</span>.
           </p>
 
           {/* Delivery Card */}
@@ -1531,7 +1857,7 @@ function CheckoutPage({
             </div>
             <div className="flex justify-between items-center text-sm border-b border-black/10 pb-3">
               <span className="text-[#828282]">Shipping To:</span>
-              <span className="font-medium text-[#141211]">{formData.firstName} {formData.lastName}, {formData.city}</span>
+              <span className="font-medium text-[#141211]">{customerDetails.firstName} {customerDetails.lastName}, {customerDetails.city} ({customerDetails.pincode})</span>
             </div>
             <div className="flex justify-between items-center text-sm">
               <span className="text-[#828282]">Amount Paid:</span>
@@ -1557,129 +1883,63 @@ function CheckoutPage({
   return (
     <div className="bg-[#ede4da] min-h-screen pt-28 pb-20">
       <div className="max-w-[1440px] mx-auto px-6 md:px-10">
-        {/* Header Breadcrumb */}
-        <div className="flex items-center justify-between mb-8 pb-4 border-b border-black/10">
+        {/* Step Indicator Header */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 pb-6 border-b border-black/10">
           <div>
-            <span className="text-[#9a2227] font-['Inter',sans-serif] text-xs font-semibold tracking-wider uppercase">
-              Secure Checkout
-            </span>
-            <h1 className="font-['Inter',sans-serif] font-bold text-4xl md:text-5xl text-[#141211] tracking-tight mt-1">
-              Checkout
+            <div className="flex items-center gap-2 text-xs font-['Inter',sans-serif] font-semibold text-[#9a2227] uppercase tracking-wider mb-1">
+              <span>Checkout Flow</span>
+              <span>•</span>
+              <span className="text-[#141211]">Step 2 of 2 — Payment</span>
+            </div>
+            <h1 className="font-['Inter',sans-serif] font-bold text-4xl md:text-5xl text-[#141211] tracking-tight">
+              Payment & Final Review
             </h1>
           </div>
           <button
-            onClick={() => { setPage("cart"); window.scrollTo(0, 0); }}
+            onClick={() => { setPage("customer-details"); window.scrollTo(0, 0); }}
             className="flex items-center gap-2 font-['Inter',sans-serif] font-medium text-sm text-[#141211] hover:text-[#9a2227] transition-colors"
           >
-            <ArrowLeft className="w-4 h-4" /> Back to Bag
+            <ArrowLeft className="w-4 h-4" /> Edit Customer Details
           </button>
         </div>
 
+        {/* Progress bar */}
+        <div className="w-full bg-black/10 rounded-full h-2 mb-10 overflow-hidden">
+          <div className="bg-[#9a2227] h-full w-full rounded-full transition-all duration-500" />
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 items-start">
-          {/* Left: Form (2 cols) */}
+          {/* Main Payment Form (2 cols) */}
           <form onSubmit={handlePlaceOrder} className="lg:col-span-2 flex flex-col gap-8">
-            {/* Contact Details */}
-            <div className="bg-white/70 backdrop-blur-md rounded-2xl p-6 md:p-8 border border-white/60 shadow-sm flex flex-col gap-6">
-              <h2 className="font-['Inter',sans-serif] font-semibold text-xl text-[#141211] flex items-center gap-3">
-                <span className="w-7 h-7 rounded-full bg-[#141211] text-white text-xs font-bold flex items-center justify-center">1</span>
-                Contact Information
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-['Inter',sans-serif] font-medium text-[#828282] uppercase mb-1">Email Address</label>
-                  <input
-                    type="email"
-                    name="email"
-                    required
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-3 rounded-xl border border-black/20 bg-white text-sm font-['Inter',sans-serif] text-[#141211] focus:outline-none focus:border-[#9a2227]"
-                  />
+            {/* Customer Details Summary Banner */}
+            <div className="bg-white/80 backdrop-blur-md rounded-2xl p-6 border border-white/60 shadow-sm flex items-center justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-full bg-[#9a2227]/10 flex items-center justify-center text-[#9a2227] flex-shrink-0">
+                  <Check className="w-6 h-6" />
                 </div>
                 <div>
-                  <label className="block text-xs font-['Inter',sans-serif] font-medium text-[#828282] uppercase mb-1">Phone Number</label>
-                  <input
-                    type="tel"
-                    name="phone"
-                    required
-                    value={formData.phone}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-3 rounded-xl border border-black/20 bg-white text-sm font-['Inter',sans-serif] text-[#141211] focus:outline-none focus:border-[#9a2227]"
-                  />
+                  <h3 className="font-['Inter',sans-serif] font-semibold text-base text-[#141211]">
+                    Deliver to {customerDetails.firstName} {customerDetails.lastName}
+                  </h3>
+                  <p className="font-['Inter',sans-serif] text-xs text-[#828282]">
+                    {customerDetails.address}, {customerDetails.city}, {customerDetails.state} - {customerDetails.pincode} ({customerDetails.phone})
+                  </p>
                 </div>
               </div>
+              <button
+                type="button"
+                onClick={() => { setPage("customer-details"); window.scrollTo(0, 0); }}
+                className="text-xs font-['Inter',sans-serif] font-medium text-[#9a2227] hover:underline"
+              >
+                Edit
+              </button>
             </div>
 
-            {/* Shipping Address */}
-            <div className="bg-white/70 backdrop-blur-md rounded-2xl p-6 md:p-8 border border-white/60 shadow-sm flex flex-col gap-6">
-              <h2 className="font-['Inter',sans-serif] font-semibold text-xl text-[#141211] flex items-center gap-3">
-                <span className="w-7 h-7 rounded-full bg-[#141211] text-white text-xs font-bold flex items-center justify-center">2</span>
-                Shipping Address
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-['Inter',sans-serif] font-medium text-[#828282] uppercase mb-1">First Name</label>
-                  <input
-                    type="text"
-                    name="firstName"
-                    required
-                    value={formData.firstName}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-3 rounded-xl border border-black/20 bg-white text-sm font-['Inter',sans-serif] text-[#141211] focus:outline-none focus:border-[#9a2227]"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-['Inter',sans-serif] font-medium text-[#828282] uppercase mb-1">Last Name</label>
-                  <input
-                    type="text"
-                    name="lastName"
-                    required
-                    value={formData.lastName}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-3 rounded-xl border border-black/20 bg-white text-sm font-['Inter',sans-serif] text-[#141211] focus:outline-none focus:border-[#9a2227]"
-                  />
-                </div>
-                <div className="md:col-span-2">
-                  <label className="block text-xs font-['Inter',sans-serif] font-medium text-[#828282] uppercase mb-1">Street Address</label>
-                  <input
-                    type="text"
-                    name="address"
-                    required
-                    value={formData.address}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-3 rounded-xl border border-black/20 bg-white text-sm font-['Inter',sans-serif] text-[#141211] focus:outline-none focus:border-[#9a2227]"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-['Inter',sans-serif] font-medium text-[#828282] uppercase mb-1">City</label>
-                  <input
-                    type="text"
-                    name="city"
-                    required
-                    value={formData.city}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-3 rounded-xl border border-black/20 bg-white text-sm font-['Inter',sans-serif] text-[#141211] focus:outline-none focus:border-[#9a2227]"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-['Inter',sans-serif] font-medium text-[#828282] uppercase mb-1">PIN Code</label>
-                  <input
-                    type="text"
-                    name="pincode"
-                    required
-                    value={formData.pincode}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-3 rounded-xl border border-black/20 bg-white text-sm font-['Inter',sans-serif] text-[#141211] focus:outline-none focus:border-[#9a2227]"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Payment Method */}
+            {/* Payment Method Selection */}
             <div className="bg-white/70 backdrop-blur-md rounded-2xl p-6 md:p-8 border border-white/60 shadow-sm flex flex-col gap-6">
               <h2 className="font-['Inter',sans-serif] font-semibold text-xl text-[#141211] flex items-center gap-3">
                 <span className="w-7 h-7 rounded-full bg-[#141211] text-white text-xs font-bold flex items-center justify-center">3</span>
-                Payment Options
+                Select Payment Option
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 <button
@@ -1713,15 +1973,14 @@ function CheckoutPage({
                 </button>
               </div>
 
-              {/* Dynamic input for payment */}
+              {/* Payment inputs */}
               {paymentMethod === "upi" && (
                 <div>
-                  <label className="block text-xs font-['Inter',sans-serif] font-medium text-[#828282] uppercase mb-1">Enter UPI ID</label>
+                  <label className="block text-xs font-['Inter',sans-serif] font-medium text-[#828282] uppercase mb-1">Virtual Payment Address (UPI ID)</label>
                   <input
                     type="text"
-                    name="upiId"
-                    value={formData.upiId}
-                    onChange={handleInputChange}
+                    value={upiId}
+                    onChange={(e) => setUpiId(e.target.value)}
                     className="w-full px-4 py-3 rounded-xl border border-black/20 bg-white text-sm font-['Inter',sans-serif] text-[#141211] focus:outline-none focus:border-[#9a2227]"
                   />
                 </div>
@@ -1733,9 +1992,8 @@ function CheckoutPage({
                     <label className="block text-xs font-['Inter',sans-serif] font-medium text-[#828282] uppercase mb-1">Card Number</label>
                     <input
                       type="text"
-                      name="cardNumber"
-                      value={formData.cardNumber}
-                      onChange={handleInputChange}
+                      value={cardNumber}
+                      onChange={(e) => setCardNumber(e.target.value)}
                       className="w-full px-4 py-3 rounded-xl border border-black/20 bg-white text-sm font-['Inter',sans-serif] text-[#141211] focus:outline-none focus:border-[#9a2227]"
                     />
                   </div>
@@ -1743,9 +2001,8 @@ function CheckoutPage({
                     <label className="block text-xs font-['Inter',sans-serif] font-medium text-[#828282] uppercase mb-1">Expiry Date</label>
                     <input
                       type="text"
-                      name="cardExp"
-                      value={formData.cardExp}
-                      onChange={handleInputChange}
+                      value={cardExp}
+                      onChange={(e) => setCardExp(e.target.value)}
                       className="w-full px-4 py-3 rounded-xl border border-black/20 bg-white text-sm font-['Inter',sans-serif] text-[#141211] focus:outline-none focus:border-[#9a2227]"
                     />
                   </div>
@@ -1753,9 +2010,8 @@ function CheckoutPage({
                     <label className="block text-xs font-['Inter',sans-serif] font-medium text-[#828282] uppercase mb-1">CVV</label>
                     <input
                       type="text"
-                      name="cardCvv"
-                      value={formData.cardCvv}
-                      onChange={handleInputChange}
+                      value={cardCvv}
+                      onChange={(e) => setCardCvv(e.target.value)}
                       className="w-full px-4 py-3 rounded-xl border border-black/20 bg-white text-sm font-['Inter',sans-serif] text-[#141211] focus:outline-none focus:border-[#9a2227]"
                     />
                   </div>
@@ -1772,13 +2028,12 @@ function CheckoutPage({
             </button>
           </form>
 
-          {/* Right: Summary Card (1 col) */}
+          {/* Right Column: Order Summary */}
           <div className="bg-white/70 backdrop-blur-md rounded-2xl p-6 md:p-8 border border-white/60 shadow-md sticky top-28 flex flex-col gap-6">
             <h2 className="font-['Inter',sans-serif] font-bold text-2xl text-[#141211] pb-4 border-b border-black/10">
               In Your Bag ({cartItems.reduce((a, b) => a + b.quantity, 0)})
             </h2>
 
-            {/* Compact items list */}
             <div className="flex flex-col gap-4 max-h-72 overflow-y-auto pr-1">
               {cartItems.map((item) => (
                 <div key={item.id} className="flex items-center gap-4">
@@ -1796,7 +2051,6 @@ function CheckoutPage({
               ))}
             </div>
 
-            {/* Calculations */}
             <div className="flex flex-col gap-3 text-sm font-['Inter',sans-serif] py-4 border-y border-black/10">
               <div className="flex justify-between text-[#141211]">
                 <span>Subtotal</span>
@@ -1809,7 +2063,7 @@ function CheckoutPage({
             </div>
 
             <div className="flex justify-between items-baseline font-['Inter',sans-serif]">
-              <span className="font-bold text-xl text-[#141211]">Total</span>
+              <span className="font-bold text-xl text-[#141211]">Total Payable</span>
               <span className="font-bold text-2xl text-[#9a2227]">
                 Rs. {total.toLocaleString("en-IN")}
               </span>
@@ -1830,6 +2084,18 @@ export default function App() {
     { id: "sama-vase-maroon", name: "SAMA Terracotta Vase", price: 2500, formattedPrice: "Rs. 2,500", color: "Maroon", img: prodFront, quantity: 1 },
     { id: "terracotta-planter-natural", name: "Terracotta Planter", price: 1800, formattedPrice: "Rs. 1,800", color: "Natural Terracotta", img: shopProd1, quantity: 2 },
   ]);
+  const [customerDetails, setCustomerDetails] = useState<CustomerDetails>({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    address: "",
+    city: "",
+    state: "",
+    pincode: "",
+    landmark: "",
+    saveDetails: false,
+  });
 
   const navigateTo = (newPage: Page) => {
     setHistoryStack((prev) => [...prev, page]);
@@ -1922,11 +2188,22 @@ export default function App() {
             setPage={navigateTo}
           />
         )}
+        {page === "customer-details" && (
+          <CustomerDetailsPage
+            customerDetails={customerDetails}
+            onSaveCustomerDetails={setCustomerDetails}
+            cartItems={cartItems}
+            setPage={navigateTo}
+            goBack={goBack}
+          />
+        )}
         {page === "checkout" && (
           <CheckoutPage
             cartItems={cartItems}
+            customerDetails={customerDetails}
             onClearCart={handleClearCart}
             setPage={navigateTo}
+            goBack={goBack}
           />
         )}
       </main>
