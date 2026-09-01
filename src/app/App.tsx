@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import {
   ShoppingCart, Menu, X, ArrowRight, ChevronLeft, ChevronRight, Instagram, Facebook, Twitter, Youtube, Check,
-  Trash2, Plus, Minus, ShieldCheck, Truck, Lock, CreditCard, ArrowLeft, Sparkles, ShoppingBag, CheckCircle2
+  Trash2, Plus, Minus, ShieldCheck, Truck, Lock, CreditCard, ArrowLeft, Sparkles, ShoppingBag, CheckCircle2, Bell
 } from "lucide-react";
 
 // ─── Landing Page Images ───────────────────────────────────────────────────
@@ -355,7 +355,7 @@ function Navbar({
           >
             <ShoppingCart className={`w-6 h-6 ${tc} transition-colors duration-300`} />
             {cartCount > 0 && (
-              <span className="absolute -top-1 -right-1 bg-[#9a2227] text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-sm">
+              <span className="absolute -top-1 -right-1 bg-white/70 backdrop-blur-sm text-[#141211] text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-sm border border-white/40">
                 {cartCount}
               </span>
             )}
@@ -607,6 +607,19 @@ function HomePage({ setPage }: { setPage: (p: Page) => void }) {
 
 // ─── Shop Page ─────────────────────────────────────────────────────────────
 function ShopPage({ setPage }: { setPage: (p: Page) => void }) {
+  const [showNotify, setShowNotify] = useState(false);
+  const [notifyForm, setNotifyForm] = useState({ name: "", phone: "", email: "", newsletter: false });
+  const [notifySubmitted, setNotifySubmitted] = useState(false);
+
+  const handleNotifyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value, type, checked } = e.target;
+    setNotifyForm((prev) => ({ ...prev, [name]: type === "checkbox" ? checked : value }));
+  };
+
+  const handleNotifySubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setNotifySubmitted(true);
+  };
   return (
     <div className="bg-[#ede4da]">
       {/* Hero */}
@@ -658,7 +671,10 @@ function ShopPage({ setPage }: { setPage: (p: Page) => void }) {
                 <button className="bg-black text-white font-['Inter',sans-serif] font-medium text-base px-6 py-3 rounded-lg opacity-60 cursor-not-allowed">
                   Coming Soon
                 </button>
-                <button className="bg-[#e6e6e6] text-black font-['Inter',sans-serif] font-medium text-base px-6 py-3 rounded-lg hover:bg-white transition-colors">
+                <button
+                  onClick={() => { setShowNotify(true); setNotifySubmitted(false); setNotifyForm({ name: "", phone: "", email: "", newsletter: false }); }}
+                  className="bg-[#e6e6e6] text-black font-['Inter',sans-serif] font-medium text-base px-6 py-3 rounded-lg hover:bg-white transition-colors"
+                >
                   Notify Me
                 </button>
               </div>
@@ -666,6 +682,115 @@ function ShopPage({ setPage }: { setPage: (p: Page) => void }) {
           </div>
         </div>
       </div>
+
+      {/* Notify Me Modal */}
+      {showNotify && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4"
+          style={{ background: "rgba(20,18,17,0.55)", backdropFilter: "blur(6px)" }}
+          onClick={() => setShowNotify(false)}
+        >
+          <div
+            className="bg-[#ede4da] rounded-2xl shadow-2xl w-full max-w-md p-8 relative flex flex-col gap-6"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close */}
+            <button
+              onClick={() => setShowNotify(false)}
+              className="absolute top-4 right-4 text-[#828282] hover:text-[#141211] transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            {notifySubmitted ? (
+              <div className="flex flex-col items-center text-center gap-4 py-4">
+                <div className="w-16 h-16 bg-[#9a2227]/10 rounded-full flex items-center justify-center">
+                  <CheckCircle2 className="w-9 h-9 text-[#9a2227]" />
+                </div>
+                <h2 className="font-['Inter',sans-serif] font-bold text-2xl text-[#141211]">You're on the list!</h2>
+                <p className="font-['Inter',sans-serif] text-[#828282] text-sm">
+                  We'll notify you the moment <span className="font-semibold text-[#141211]">Collection 2 — Tableware</span> launches. Watch your inbox.
+                </p>
+                <button
+                  onClick={() => setShowNotify(false)}
+                  className="mt-2 bg-[#141211] hover:bg-[#9a2227] text-[#ede4da] font-['Inter',sans-serif] font-medium text-sm px-6 py-3 rounded-xl transition-all"
+                >
+                  Close
+                </button>
+              </div>
+            ) : (
+              <>
+                <div>
+                  <span className="text-[#9a2227] font-['Inter',sans-serif] text-xs font-semibold tracking-widest uppercase">Early Access</span>
+                  <h2 className="font-['Inter',sans-serif] font-bold text-2xl text-[#141211] mt-1">Be the First to Know</h2>
+                  <p className="font-['Inter',sans-serif] text-[#828282] text-sm mt-1">
+                    Collection 2 — Tableware is almost here. Leave your details and we'll let you know before it goes live.
+                  </p>
+                </div>
+
+                <form onSubmit={handleNotifySubmit} className="flex flex-col gap-4">
+                  <div>
+                    <label className="block text-xs font-['Inter',sans-serif] font-medium text-[#828282] uppercase mb-1">Full Name *</label>
+                    <input
+                      type="text"
+                      name="name"
+                      required
+                      value={notifyForm.name}
+                      onChange={handleNotifyChange}
+                      placeholder="e.g. Priya Sharma"
+                      className="w-full px-4 py-3 rounded-xl border border-black/20 bg-white text-sm font-['Inter',sans-serif] text-[#141211] focus:outline-none focus:border-[#9a2227] placeholder:text-[#c0b8b0]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-['Inter',sans-serif] font-medium text-[#828282] uppercase mb-1">Phone Number *</label>
+                    <input
+                      type="tel"
+                      name="phone"
+                      required
+                      value={notifyForm.phone}
+                      onChange={handleNotifyChange}
+                      placeholder="+91 XXXXX XXXXX"
+                      className="w-full px-4 py-3 rounded-xl border border-black/20 bg-white text-sm font-['Inter',sans-serif] text-[#141211] focus:outline-none focus:border-[#9a2227] placeholder:text-[#c0b8b0]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-['Inter',sans-serif] font-medium text-[#828282] uppercase mb-1">Email Address *</label>
+                    <input
+                      type="email"
+                      name="email"
+                      required
+                      value={notifyForm.email}
+                      onChange={handleNotifyChange}
+                      placeholder="you@example.com"
+                      className="w-full px-4 py-3 rounded-xl border border-black/20 bg-white text-sm font-['Inter',sans-serif] text-[#141211] focus:outline-none focus:border-[#9a2227] placeholder:text-[#c0b8b0]"
+                    />
+                  </div>
+                  <label className="flex items-start gap-3 cursor-pointer pt-1">
+                    <input
+                      type="checkbox"
+                      name="newsletter"
+                      checked={notifyForm.newsletter}
+                      onChange={handleNotifyChange}
+                      className="w-4 h-4 mt-0.5 accent-[#9a2227] rounded cursor-pointer flex-shrink-0"
+                    />
+                    <span className="font-['Inter',sans-serif] text-sm text-[#141211] leading-snug">
+                      Sign me up for future collection updates, craft stories & exclusive early-access offers from Storyboard.
+                    </span>
+                  </label>
+
+                  <button
+                    type="submit"
+                    className="bg-[#141211] hover:bg-[#9a2227] text-[#ede4da] font-['Inter',sans-serif] font-medium text-base py-3.5 rounded-xl shadow-md transition-all mt-1 flex items-center justify-center gap-2 group"
+                  >
+                    <Bell className="w-4 h-4" />
+                    <span>Notify Me at Launch</span>
+                  </button>
+                </form>
+              </>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Best Sellers */}
       <div className="max-w-[1440px] mx-auto px-6 md:px-10 py-20">
