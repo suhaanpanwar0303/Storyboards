@@ -49,7 +49,7 @@ import articleRelated2 from "@/imports/Article/379c0155bc413a61ca41917df832a2e64
 import articleRelated3 from "@/imports/Article/44b0aa43a57e23aec207706d7933d9eaa0f3360a.png";
 
 // ─── Types ─────────────────────────────────────────────────────────────────
-type Page = "home" | "shop" | "product" | "about" | "article" | "cart" | "checkout";
+type Page = "home" | "shop" | "product" | "about" | "article" | "cart" | "checkout" | "catalogue";
 
 export interface CartItem {
   id: string;
@@ -61,15 +61,171 @@ export interface CartItem {
   quantity: number;
 }
 
+export interface Product {
+  id: string;
+  name: string;
+  subtitle: string;
+  category: "vases" | "planters" | "pots" | "tableware";
+  price: number;
+  formattedPrice: string;
+  description: string;
+  material: string;
+  dimensions: string;
+  origin: string;
+  quantityInfo: string;
+  primaryImg: string;
+  gallery: { src: string; label: string }[];
+  colors: { name: string; hex: string }[];
+}
+
+export const PRODUCTS: Product[] = [
+  {
+    id: "sama-vase",
+    name: "SAMA Terracotta Vase",
+    subtitle: "Amphora-style statement vase with pedestal base",
+    category: "vases",
+    price: 2500,
+    formattedPrice: "Rs. 2,500",
+    description: "A sculptural amphora-style vase with a pedestal base and tall neck, accented by two curved handles. Finished in a warm matte glaze — a bold statement piece for any space.",
+    material: "Natural Terracotta",
+    dimensions: "8 × 8 × 12 in",
+    origin: "Rajasthan, India",
+    quantityInfo: "1 handcrafted vase",
+    primaryImg: prodFront,
+    gallery: [
+      { src: prodFront, label: "Front View" },
+      { src: prodAngled, label: "Angled" },
+      { src: prodTop, label: "Top Detail" },
+      { src: prodSide, label: "Side Profile" },
+      { src: prodLifestyle1, label: "In Living Room" },
+      { src: prodLifestyle2, label: "Styled Tabletop" },
+    ],
+    colors: [
+      { name: "Maroon", hex: "#6B2737" },
+      { name: "Mauve", hex: "#C4A0B0" },
+      { name: "Fern Green", hex: "#4F7942" },
+      { name: "Midnight Blue", hex: "#1B2A4A" },
+      { name: "Deep Copper", hex: "#B87333" },
+      { name: "Noir", hex: "#1a1a1a" },
+      { name: "Dusty Rose", hex: "#C99A8E" },
+      { name: "Yellow", hex: "#F4B14B" },
+      { name: "Off-White", hex: "#F0EBE0" },
+    ],
+  },
+  {
+    id: "terracotta-planter",
+    name: "Terracotta Planter",
+    subtitle: "Breathable natural earthenware for indoor plants",
+    category: "planters",
+    price: 1800,
+    formattedPrice: "Rs. 1,800",
+    description: "Hand-turned terracotta planter designed with optimal root aeration and natural clay porosity. Ideal for monstera, ficus, or statement indoor greenery.",
+    material: "Porous Earthenware",
+    dimensions: "10 × 10 × 10 in",
+    origin: "Rajasthan, India",
+    quantityInfo: "1 planter with drainage tray",
+    primaryImg: shopProd1,
+    gallery: [
+      { src: shopProd1, label: "Front View" },
+      { src: relProd1, label: "Side Angle" },
+      { src: landingCard1, label: "Plant Styling" },
+      { src: shopFeatured, label: "Studio Display" },
+    ],
+    colors: [
+      { name: "Natural Terracotta", hex: "#BE683A" },
+      { name: "Matte Charcoal", hex: "#2B2B2B" },
+      { name: "Sunbaked Clay", hex: "#D68C5E" },
+      { name: "Forest Moss", hex: "#3A5335" },
+    ],
+  },
+  {
+    id: "matte-pot",
+    name: "Matte Pot Vessel",
+    subtitle: "Minimalist low-profile pot with silky matte finish",
+    category: "pots",
+    price: 1400,
+    formattedPrice: "Rs. 1,400",
+    description: "A compact grounded pot featuring soft organic curves and a velvety tactile glaze. Fits seamlessly on bookshelves, sideboards, or dining tables.",
+    material: "High-Fired Clay",
+    dimensions: "7 × 7 × 6 in",
+    origin: "Rajasthan, India",
+    quantityInfo: "1 matte pot",
+    primaryImg: shopProd2,
+    gallery: [
+      { src: shopProd2, label: "Front View" },
+      { src: relProd2, label: "Angled View" },
+      { src: landingCard2, label: "Lifestyle Placement" },
+    ],
+    colors: [
+      { name: "Sandstone", hex: "#D9C3B0" },
+      { name: "Earthy Terracotta", hex: "#9A2227" },
+      { name: "Olive Tint", hex: "#5C6B55" },
+      { name: "Chalk White", hex: "#F5F2EC" },
+    ],
+  },
+  {
+    id: "studio-vessel",
+    name: "Studio Vessel",
+    subtitle: "Artisan textured urn inspired by heritage pottery",
+    category: "vases",
+    price: 2200,
+    formattedPrice: "Rs. 2,200",
+    description: "An expressive wide-rimmed studio vessel with subtle horizontal ribbing hand-carved by master potters. Brings rich tactile depth to modern interiors.",
+    material: "Textured Red Clay",
+    dimensions: "9 × 9 × 11 in",
+    origin: "Rajasthan, India",
+    quantityInfo: "1 studio vessel",
+    primaryImg: relProd3,
+    gallery: [
+      { src: relProd3, label: "Studio View" },
+      { src: landingCard4, label: "Artistic Close-up" },
+      { src: shopCol1, label: "Collection Context" },
+    ],
+    colors: [
+      { name: "Rustic Amber", hex: "#C87D46" },
+      { name: "Raw Umber", hex: "#4A3525" },
+      { name: "Soft Clay", hex: "#E0B094" },
+    ],
+  },
+  {
+    id: "artisan-tableware",
+    name: "Artisan Tableware Set",
+    subtitle: "Hand-thrown 4-piece ceramic & terracotta set",
+    category: "tableware",
+    price: 3200,
+    formattedPrice: "Rs. 3,200",
+    description: "A thoughtful set for daily dining rituals, comprising 2 serving plates, 1 bowl, and 1 water tumbler. Food-safe, durable, and dishwasher-friendly.",
+    material: "Glazed Clay & Stoneware",
+    dimensions: "Varied (Plates 10in, Bowl 6in)",
+    origin: "Rajasthan, India",
+    quantityInfo: "Set of 4 pieces",
+    primaryImg: shopCol2,
+    gallery: [
+      { src: shopCol2, label: "Full Set View" },
+      { src: landingCard3, label: "Dining Setup" },
+      { src: articleImg2, label: "Crafting Process" },
+    ],
+    colors: [
+      { name: "Warm Terracotta", hex: "#9A2227" },
+      { name: "Oatmeal Beige", hex: "#EDE4DA" },
+      { name: "Sage Green", hex: "#6A7B66" },
+    ],
+  },
+];
+
 // ─── Shared: Navbar ────────────────────────────────────────────────────────
 function Navbar({
   page,
   setPage,
   cartCount,
+  goBack,
+  canGoBack,
 }: {
   page: Page;
   setPage: (p: Page) => void;
   cartCount: number;
+  goBack: () => void;
+  canGoBack: boolean;
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -91,6 +247,7 @@ function Navbar({
     article: "bg-[#296027]",
     cart: "bg-[#ede4da]",
     checkout: "bg-[#ede4da]",
+    catalogue: "bg-[#ede4da]",
   };
 
   const textColor: Record<Page, string> = {
@@ -101,6 +258,7 @@ function Navbar({
     article: "text-[#ede4da]",
     cart: "text-[#141211]",
     checkout: "text-[#141211]",
+    catalogue: "text-[#141211]",
   };
 
   const shopBtnStyle: Record<Page, string> = {
@@ -111,6 +269,7 @@ function Navbar({
     article: "bg-[#141211] text-[#ede4da]",
     cart: "bg-[#141211] text-[#ede4da]",
     checkout: "bg-[#141211] text-[#ede4da]",
+    catalogue: "bg-[#141211] text-[#ede4da]",
   };
 
   const isShop = page === "shop";
@@ -129,20 +288,34 @@ function Navbar({
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 ${nav} transition-all duration-300`}>
       <div className="max-w-[1440px] mx-auto px-6 md:px-10 h-20 flex items-center justify-between">
-        {/* Logo */}
-        <button
-          onClick={() => { setPage("home"); window.scrollTo(0, 0); }}
-          className="flex items-center gap-3 group"
-        >
-          <img src={logoEmblem} alt="Storyboard" className="h-12 w-12 object-contain" />
-          <span className={`font-['Inter',sans-serif] font-medium text-lg tracking-widest ${tc} transition-colors duration-300`}>
-            STORYBOARD
-          </span>
-        </button>
+        {/* Logo & Back button */}
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => { setPage("home"); window.scrollTo(0, 0); }}
+            className="flex items-center gap-3 group"
+          >
+            <img src={logoEmblem} alt="Storyboard" className="h-12 w-12 object-contain" />
+            <span className={`font-['Inter',sans-serif] font-medium text-lg tracking-widest ${tc} transition-colors duration-300`}>
+              STORYBOARD
+            </span>
+          </button>
+
+          {canGoBack && (
+            <button
+              onClick={goBack}
+              className={`flex items-center gap-1.5 font-['Inter',sans-serif] font-medium text-xs tracking-wider uppercase border border-current/30 px-3 py-1.5 rounded-full ${tc} hover:bg-black/5 transition-all`}
+              title="Go back to previous page"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Back</span>
+            </button>
+          )}
+        </div>
 
         {/* Desktop nav */}
         <nav className="hidden md:flex items-center gap-8">
           {[
+            { label: "CATALOGUE", page: "catalogue" as Page },
             { label: "CUSTOMIZE", page: "home" as Page },
             { label: "IDEAS", page: "article" as Page },
             { label: "ABOUT US", page: "about" as Page },
@@ -518,7 +691,19 @@ function ShopPage({ setPage }: { setPage: (p: Page) => void }) {
       {/* Features strip */}
       <div className="bg-[#f4b14b] py-16">
         <div className="max-w-[1440px] mx-auto px-6 md:px-10">
-          <h2 className="font-['Inter',sans-serif] font-semibold text-5xl text-black mb-12 tracking-tight">Why Storyboard</h2>
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-12">
+            <h2 className="font-['Inter',sans-serif] font-semibold text-4xl sm:text-5xl text-black tracking-tight">
+              Why Storyboard
+            </h2>
+            <button
+              onClick={() => { setPage("catalogue"); window.scrollTo(0, 0); }}
+              className="bg-[#141211] hover:bg-[#9a2227] text-[#ede4da] font-['Inter',sans-serif] font-medium text-base px-6 py-3 rounded-xl transition-all shadow-md flex items-center gap-2"
+            >
+              <span>Explore Full Catalogue</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
             {[
               { icon: "🌍", head: "Made in India", body: "Every piece is handcrafted by artisans in Rajasthan using generational techniques passed down over centuries." },
@@ -543,169 +728,164 @@ function ShopPage({ setPage }: { setPage: (p: Page) => void }) {
 
 // ─── Product Detail Page ───────────────────────────────────────────────────
 function ProductPage({
+  productId,
   setPage,
+  setSelectedProductId,
   onAddToCart,
+  goBack,
 }: {
+  productId: string;
   setPage: (p: Page) => void;
+  setSelectedProductId: (id: string) => void;
   onAddToCart: (item: CartItem) => void;
+  goBack: () => void;
 }) {
+  const product = PRODUCTS.find((p) => p.id === productId) || PRODUCTS[0];
   const [activeImg, setActiveImg] = useState(0);
-  const [selectedColor, setSelectedColor] = useState("Yellow");
+  const [selectedColor, setSelectedColor] = useState(product.colors[0]?.name || "Natural");
   const [qty, setQty] = useState(1);
   const [added, setAdded] = useState(false);
   const [activeTab, setActiveTab] = useState<"details" | "care" | "shipping">("details");
 
-  const images = [
-    { src: prodFront, label: "Front" },
-    { src: prodAngled, label: "Angled" },
-    { src: prodTop, label: "Top" },
-    { src: prodSide, label: "Side" },
-    { src: prodLifestyle1, label: "Lifestyle" },
-    { src: prodLifestyle2, label: "Styled" },
-  ];
-
-  const colors: { name: string; hex: string }[] = [
-    { name: "Maroon", hex: "#6B2737" },
-    { name: "Mauve", hex: "#C4A0B0" },
-    { name: "Fern Green", hex: "#4F7942" },
-    { name: "Midnight Blue", hex: "#1B2A4A" },
-    { name: "Deep Copper", hex: "#B87333" },
-    { name: "Noir", hex: "#1a1a1a" },
-    { name: "Dusty Rose", hex: "#C99A8E" },
-    { name: "Yellow", hex: "#F4B14B" },
-    { name: "Off-White", hex: "#F0EBE0" },
-  ];
+  useEffect(() => {
+    setActiveImg(0);
+    if (product.colors[0]) {
+      setSelectedColor(product.colors[0].name);
+    }
+  }, [productId]);
 
   const handleAddToCart = () => {
     onAddToCart({
-      id: "sama-vase",
-      name: "SAMA Terracotta Vase",
-      price: 2500,
-      formattedPrice: "Rs. 2,500",
+      id: `${product.id}-${selectedColor.toLowerCase().replace(/\s+/g, "-")}`,
+      name: product.name,
+      price: product.price,
+      formattedPrice: product.formattedPrice,
       color: selectedColor,
-      img: prodFront,
+      img: product.primaryImg,
       quantity: qty,
     });
     setAdded(true);
     setTimeout(() => setAdded(false), 2500);
   };
 
-  const relatedProducts = [
-    { img: relProd1, name: "Terracotta Pot", price: "Rs. 1800" },
-    { img: relProd2, name: "Matte Planter", price: "Rs. 1400" },
-    { img: relProd3, name: "Studio Vessel", price: "Rs. 2200" },
-  ];
+  const handleBuyNow = () => {
+    handleAddToCart();
+    setPage("cart");
+    window.scrollTo(0, 0);
+  };
+
+  const relatedProducts = PRODUCTS.filter((p) => p.id !== product.id).slice(0, 3);
 
   return (
     <div className="bg-[#ede4da]">
       {/* Product section */}
       <div className="max-w-[1440px] mx-auto px-6 md:px-10 pt-28 pb-20">
+        {/* Back link */}
+        <button
+          onClick={goBack}
+          className="flex items-center gap-2 text-[#9a2227] font-['Inter',sans-serif] text-xs font-semibold tracking-wider uppercase mb-8 hover:underline"
+        >
+          <ArrowLeft className="w-4 h-4" /> Back to Previous Page
+        </button>
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
           {/* Left: Image gallery */}
           <div className="flex flex-col gap-4">
-            <div className="relative aspect-square overflow-hidden rounded-2xl bg-white">
+            <div className="relative aspect-square overflow-hidden rounded-2xl bg-white shadow-sm">
               <img
-                src={images[activeImg].src}
-                alt={images[activeImg].label}
+                src={product.gallery[activeImg]?.src || product.primaryImg}
+                alt={product.gallery[activeImg]?.label || product.name}
                 className="w-full h-full object-cover transition-opacity duration-300"
               />
-              <button
-                onClick={() => setActiveImg((activeImg - 1 + images.length) % images.length)}
-                className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/40 hover:bg-black/60 text-white rounded-full flex items-center justify-center transition-colors"
-              >
-                <ChevronLeft className="w-5 h-5" />
-              </button>
-              <button
-                onClick={() => setActiveImg((activeImg + 1) % images.length)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/40 hover:bg-black/60 text-white rounded-full flex items-center justify-center transition-colors"
-              >
-                <ChevronRight className="w-5 h-5" />
-              </button>
+              {product.gallery.length > 1 && (
+                <>
+                  <button
+                    onClick={() => setActiveImg((activeImg - 1 + product.gallery.length) % product.gallery.length)}
+                    className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/40 hover:bg-black/60 text-white rounded-full flex items-center justify-center transition-colors"
+                  >
+                    <ChevronLeft className="w-5 h-5" />
+                  </button>
+                  <button
+                    onClick={() => setActiveImg((activeImg + 1) % product.gallery.length)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/40 hover:bg-black/60 text-white rounded-full flex items-center justify-center transition-colors"
+                  >
+                    <ChevronRight className="w-5 h-5" />
+                  </button>
+                </>
+              )}
             </div>
-            <div className="grid grid-cols-6 gap-2">
-              {images.map((img, i) => (
-                <button
-                  key={i}
-                  onClick={() => setActiveImg(i)}
-                  className={`aspect-square overflow-hidden rounded-lg border-2 transition-colors ${activeImg === i ? "border-[#9a2227]" : "border-transparent"}`}
-                >
-                  <img src={img.src} alt={img.label} className="w-full h-full object-cover" />
-                </button>
-              ))}
-            </div>
+            {product.gallery.length > 1 && (
+              <div className="grid grid-cols-6 gap-2">
+                {product.gallery.map((img, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setActiveImg(i)}
+                    className={`aspect-square overflow-hidden rounded-lg border-2 transition-colors ${activeImg === i ? "border-[#9a2227]" : "border-transparent"}`}
+                  >
+                    <img src={img.src} alt={img.label} className="w-full h-full object-cover" />
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Right: Product info */}
           <div className="flex flex-col gap-6">
             <div>
-              <p className="font-['Lancelot',serif] text-[#9a2227] text-6xl leading-tight mb-2">SAMA</p>
-              <h1 className="font-['Roboto',sans-serif] font-medium text-3xl text-[#e7d0d0] mb-1">Terracotta Vase</h1>
-              <p className="font-['Inter',sans-serif] font-medium text-3xl text-black">Rs. 2,500</p>
+              <p className="font-['Lancelot',serif] text-[#9a2227] text-6xl leading-tight mb-2">STORYBOARD</p>
+              <h1 className="font-['Roboto',sans-serif] font-bold text-4xl text-[#141211] mb-2">{product.name}</h1>
+              <p className="font-['Inter',sans-serif] font-semibold text-3xl text-[#9a2227]">{product.formattedPrice}</p>
             </div>
 
-            <p className="font-['Cantarell',sans-serif] text-white/90 text-lg leading-relaxed bg-[#143565] p-5 rounded-xl">
-              A sculptural amphora-style vase with a pedestal base and tall neck, accented by two curved handles. Finished in a warm matte glaze — a bold statement piece for any space.
+            <p className="font-['Inter',sans-serif] text-[#141211]/90 text-lg leading-relaxed bg-white/60 backdrop-blur-sm p-6 rounded-2xl border border-white/60">
+              {product.description}
             </p>
 
             {/* Color selection */}
             <div>
-              <p className="font-['Inter',sans-serif] font-medium text-base text-black mb-3">
-                Colour: <span className="text-[#9a2227]">{selectedColor}</span>
+              <p className="font-['Inter',sans-serif] font-medium text-base text-[#141211] mb-3">
+                Colour Finish: <span className="text-[#9a2227] font-semibold">{selectedColor}</span>
               </p>
               <div className="flex flex-wrap gap-3">
-                {colors.map((c) => (
+                {product.colors.map((c) => (
                   <button
                     key={c.name}
                     onClick={() => setSelectedColor(c.name)}
                     title={c.name}
-                    className={`w-8 h-8 rounded-full border-2 transition-transform ${selectedColor === c.name ? "border-[#9a2227] scale-110" : "border-white/60"}`}
+                    className={`w-9 h-9 rounded-full border-2 transition-all ${selectedColor === c.name ? "border-[#9a2227] scale-110 shadow-sm" : "border-white/80"}`}
                     style={{ backgroundColor: c.hex }}
                   />
                 ))}
               </div>
             </div>
 
-            {/* Specs */}
-            <div className="grid grid-cols-2 gap-3 text-sm font-['Inter',sans-serif]">
-              <div className="bg-white/50 rounded-lg px-4 py-3">
-                <p className="text-[#828282] text-xs mb-0.5">Material</p>
-                <p className="font-medium text-black">Terracotta</p>
-              </div>
-              <div className="bg-white/50 rounded-lg px-4 py-3">
-                <p className="text-[#828282] text-xs mb-0.5">Size</p>
-                <p className="font-medium text-black">8 × 8 × 12 in</p>
-              </div>
-              <div className="bg-white/50 rounded-lg px-4 py-3">
-                <p className="text-[#828282] text-xs mb-0.5">Origin</p>
-                <p className="font-medium text-black">Rajasthan, India</p>
-              </div>
-              <div className="bg-white/50 rounded-lg px-4 py-3">
-                <p className="text-[#828282] text-xs mb-0.5">Quantity</p>
-                <p className="font-medium text-black">1 vase</p>
-              </div>
-            </div>
-
             {/* Quantity + Add to cart */}
-            <div className="flex gap-4 items-center">
-              <div className="flex items-center border border-black/20 rounded-lg overflow-hidden">
+            <div className="flex gap-4 items-center pt-2">
+              <div className="flex items-center border border-black/20 rounded-xl overflow-hidden bg-white">
                 <button onClick={() => setQty(Math.max(1, qty - 1))} className="px-4 py-3 text-lg font-medium hover:bg-black/5 transition-colors">−</button>
-                <span className="px-5 py-3 font-['Inter',sans-serif] font-medium text-base text-black min-w-[48px] text-center">{qty}</span>
+                <span className="px-5 py-3 font-['Inter',sans-serif] font-semibold text-base text-[#141211] min-w-[48px] text-center">{qty}</span>
                 <button onClick={() => setQty(qty + 1)} className="px-4 py-3 text-lg font-medium hover:bg-black/5 transition-colors">+</button>
               </div>
               <button
                 onClick={handleAddToCart}
-                className={`flex-1 py-4 rounded-lg font-['Roboto',sans-serif] text-xl transition-all flex items-center justify-center gap-3 ${
+                className={`flex-1 py-4 rounded-xl font-['Roboto',sans-serif] text-lg font-medium transition-all flex items-center justify-center gap-3 shadow-md ${
                   added ? "bg-[#4F7942] text-white" : "bg-[#141211] text-white hover:bg-[#9a2227]"
                 }`}
               >
                 {added ? (
                   <>
                     <Check className="w-5 h-5" />
-                    Added to Cart
+                    Added to Bag
                   </>
                 ) : (
-                  "Add to cart"
+                  "Add to Bag"
                 )}
+              </button>
+              <button
+                onClick={handleBuyNow}
+                className="py-4 px-6 rounded-xl font-['Roboto',sans-serif] text-lg font-medium bg-[#9a2227] text-white hover:bg-[#7d1c20] transition-colors shadow-md"
+              >
+                Buy Now
               </button>
             </div>
 
@@ -722,14 +902,14 @@ function ProductPage({
                   </button>
                 ))}
               </div>
-              <div className="font-['Cantarell',sans-serif] text-black/80 text-base leading-relaxed">
+              <div className="font-['Inter',sans-serif] text-[#141211]/80 text-sm leading-relaxed">
                 {activeTab === "details" && (
-                  <div>
-                    <p>Net Quantity: 1 vase</p>
-                    <p>Materials: Terracotta, Paint</p>
-                    <p>Makers: Artisans of Rajasthan</p>
-                    <p>Made in: Rajasthan, India</p>
-                    <p className="mt-2">Each piece is handmade and may carry natural variations in texture and tone — a mark of its authentic craft origins.</p>
+                  <div className="space-y-1">
+                    <p>• Net Quantity: {product.quantityInfo}</p>
+                    <p>• Material: {product.material}</p>
+                    <p>• Makers: Artisans of Rajasthan</p>
+                    <p>• Made in: {product.origin}</p>
+                    <p className="mt-2 text-xs text-[#828282]">Each piece is handmade and may carry natural variations in texture and tone — a mark of its authentic craft origins.</p>
                   </div>
                 )}
                 {activeTab === "care" && (
@@ -1645,10 +1825,30 @@ function CheckoutPage({
 // ─── App ───────────────────────────────────────────────────────────────────
 export default function App() {
   const [page, setPage] = useState<Page>("home");
+  const [selectedProductId, setSelectedProductId] = useState<string>("sama-vase");
+  const [historyStack, setHistoryStack] = useState<Page[]>([]);
   const [cartItems, setCartItems] = useState<CartItem[]>([
-    { id: "sama-vase", name: "SAMA Terracotta Vase", price: 2500, formattedPrice: "Rs. 2,500", color: "Terracotta Red", img: prodFront, quantity: 1 },
-    { id: "terracotta-planter", name: "Terracotta Planter", price: 1800, formattedPrice: "Rs. 1,800", color: "Matte Natural", img: shopProd1, quantity: 2 },
+    { id: "sama-vase-maroon", name: "SAMA Terracotta Vase", price: 2500, formattedPrice: "Rs. 2,500", color: "Maroon", img: prodFront, quantity: 1 },
+    { id: "terracotta-planter-natural", name: "Terracotta Planter", price: 1800, formattedPrice: "Rs. 1,800", color: "Natural Terracotta", img: shopProd1, quantity: 2 },
   ]);
+
+  const navigateTo = (newPage: Page) => {
+    setHistoryStack((prev) => [...prev, page]);
+    setPage(newPage);
+  };
+
+  const goBack = () => {
+    setHistoryStack((prev) => {
+      if (prev.length === 0) {
+        setPage("home");
+        return [];
+      }
+      const newStack = [...prev];
+      const previousPage = newStack.pop()!;
+      setPage(previousPage);
+      return newStack;
+    });
+  };
 
   const handleAddToCart = (newItem: CartItem) => {
     setCartItems((prev) => {
@@ -1686,30 +1886,52 @@ export default function App() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Navbar page={page} setPage={setPage} cartCount={cartCount} />
+      <Navbar
+        page={page}
+        setPage={navigateTo}
+        cartCount={cartCount}
+        goBack={goBack}
+        canGoBack={historyStack.length > 0}
+      />
       <main className="flex-1">
-        {page === "home" && <HomePage setPage={setPage} />}
-        {page === "shop" && <ShopPage setPage={setPage} />}
-        {page === "product" && <ProductPage setPage={setPage} onAddToCart={handleAddToCart} />}
+        {page === "home" && <HomePage setPage={navigateTo} />}
+        {page === "shop" && <ShopPage setPage={navigateTo} />}
+        {page === "catalogue" && (
+          <CataloguePage
+            setPage={navigateTo}
+            setSelectedProductId={setSelectedProductId}
+            onAddToCart={handleAddToCart}
+            goBack={goBack}
+          />
+        )}
+        {page === "product" && (
+          <ProductPage
+            productId={selectedProductId}
+            setPage={navigateTo}
+            setSelectedProductId={setSelectedProductId}
+            onAddToCart={handleAddToCart}
+            goBack={goBack}
+          />
+        )}
         {page === "about" && <AboutPage />}
-        {page === "article" && <ArticlePage setPage={setPage} />}
+        {page === "article" && <ArticlePage setPage={navigateTo} />}
         {page === "cart" && (
           <CartPage
             cartItems={cartItems}
             onUpdateQuantity={handleUpdateQuantity}
             onRemoveItem={handleRemoveItem}
-            setPage={setPage}
+            setPage={navigateTo}
           />
         )}
         {page === "checkout" && (
           <CheckoutPage
             cartItems={cartItems}
             onClearCart={handleClearCart}
-            setPage={setPage}
+            setPage={navigateTo}
           />
         )}
       </main>
-      <Footer setPage={setPage} />
+      <Footer setPage={navigateTo} />
     </div>
   );
 }
