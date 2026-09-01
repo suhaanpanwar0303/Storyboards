@@ -315,7 +315,6 @@ function Navbar({
         {/* Desktop nav */}
         <nav className="hidden md:flex items-center gap-8">
           {[
-            { label: "CATALOGUE", page: "catalogue" as Page },
             { label: "CUSTOMIZE", page: "home" as Page },
             { label: "IDEAS", page: "article" as Page },
             { label: "ABOUT US", page: "about" as Page },
@@ -622,11 +621,11 @@ function ShopPage({ setPage }: { setPage: (p: Page) => void }) {
               <h2 className="font-['Inter',sans-serif] font-semibold text-[#ede4da] text-4xl mb-4">Collection 1 — Vases</h2>
               <p className="font-['Inter',sans-serif] text-[#828282] text-lg mb-8">Amphora-style forms, matte finishes, bold presence</p>
               <div className="flex gap-4">
-                <button onClick={() => { setPage("product"); window.scrollTo(0, 0); }} className="bg-black text-white font-['Inter',sans-serif] font-medium text-base px-6 py-3 rounded-lg hover:bg-[#9a2227] transition-colors">
+                <button onClick={() => { setPage("catalogue"); window.scrollTo(0, 0); }} className="bg-black text-white font-['Inter',sans-serif] font-medium text-base px-6 py-3 rounded-lg hover:bg-[#9a2227] transition-colors">
                   Shop Vases
                 </button>
-                <button className="bg-[#e6e6e6] text-black font-['Inter',sans-serif] font-medium text-base px-6 py-3 rounded-lg hover:bg-white transition-colors">
-                  Learn More
+                <button onClick={() => { setPage("catalogue"); window.scrollTo(0, 0); }} className="bg-[#e6e6e6] text-black font-['Inter',sans-serif] font-medium text-base px-6 py-3 rounded-lg hover:bg-white transition-colors">
+                  View Catalogue
                 </button>
               </div>
             </div>
